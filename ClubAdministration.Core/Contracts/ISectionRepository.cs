@@ -1,6 +1,10 @@
-﻿namespace ClubAdministration.Core.Contracts
+﻿using ClubAdministration.Core.Entities;
+using System.Threading.Tasks;
+
+namespace ClubAdministration.Core.Contracts
 {
-  public interface ISectionRepository
-  {
-  }
+    public interface ISectionRepository
+    {
+        Task<Section[]> GetAllSectionsAsync();
+    }
 }
