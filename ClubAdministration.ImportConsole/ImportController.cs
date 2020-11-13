@@ -27,8 +27,8 @@ namespace ClubAdministration.ImportConsole
                 .GroupBy(m => m[0])
                 .Select(member => new Member
                 {
-                    LastName = member.Key,
-                    FirstName = csvFile.Select(s => s[1]).FirstOrDefault()
+                    LastName = member.First()[0],
+                    FirstName = member.First()[1]
                 })
                 .ToList();
 
@@ -36,10 +36,11 @@ namespace ClubAdministration.ImportConsole
                 .Select(ms => new MemberSection
                 {
                     Section = sections.Where(s => s.Name.Equals(ms[2])).FirstOrDefault(),
-                    Member = members.Where(m => m.LastName.Equals(ms[0])).FirstOrDefault()
+                    Member = members.Where(m => m.LastName.Equals(ms[0]) && m.FirstName.Equals(ms[1])).FirstOrDefault()
                 })
                 .ToArray()
                 ;
+
             return memberSections;
         }
     }

@@ -4,18 +4,20 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ClubAdministration.Core.Entities
 {
-  public class Member : EntityObject
-  {
-    [Required]
-    [MinLength(2, ErrorMessage = "FirstNames minimum length is 2")]
-    public string FirstName { get; set; }
+    public class Member : EntityObject
+    {
+        [Required]
+        [MinLength(2, ErrorMessage = "LastNames minimum length is 2")]
+        public string LastName { get; set; }
 
-    [Required]
-    [MinLength(2, ErrorMessage = "FirstNames minimum length is 2")]
-    public string LastName { get; set; }
+        [Required]
+        [MinLength(2, ErrorMessage = "FirstNames minimum length is 2")]
+        public string FirstName { get; set; }
 
-    public ICollection<MemberSection> MemberSections { get; set; }
+        public string FullName => LastName + " " + FirstName;
 
-    public override string ToString() => $"Id: {Id}; LastName: {LastName}; FirstName: {FirstName}; MemberSections: {MemberSections?.Count}";
-  }
+        public ICollection<MemberSection> MemberSections { get; set; }
+
+        public override string ToString() => $"Id: {Id}; LastName: {LastName}; FirstName: {FirstName}; MemberSections: {MemberSections?.Count}";
+    }
 }

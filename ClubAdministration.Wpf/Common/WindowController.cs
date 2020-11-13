@@ -1,5 +1,6 @@
 ﻿using ClubAdministration.Wpf.Common.Contracts;
 using ClubAdministration.Wpf.ViewModels;
+using ClubAdministration.Wpf.Views;
 using System;
 using System.Collections.Generic;
 using System.Windows;
@@ -20,6 +21,7 @@ namespace ClubAdministration.Wpf.Common
 
         MainViewModel _ => new MainWindow(),
 
+        MembersViewModel _ => new MembersWindow(),
         // default -> InvalidOperationException
         _ => throw new InvalidOperationException($"Unbekanntes ViewModel '{viewModel}'"),
       };

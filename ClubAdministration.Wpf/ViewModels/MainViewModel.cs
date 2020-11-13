@@ -9,23 +9,59 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace ClubAdministration.Wpf.ViewModels
 {
     public class MainViewModel : BaseViewModel
     {
-        private Section[] _allSections;
+        private MemberSection[] _allmembSect;
+        private Member _selectedMember;
+        private Section _selectedSection;
+        private ICommand _cmdEditMember;
+        private MemberSection _selectedMemberSection;
 
         public ObservableCollection<Section> Sections { get; set; }
         public ObservableCollection<Member> Members { get; set; }
         public ObservableCollection<MemberSection> MemberSections { get; set; }
 
-        public Member SelectedMember { get; set; }
-        public Section SelectedSection { get; set; }
+        public Member SelectedMember
+        {
+            get { return _selectedMember; }
+            set
+            {
+                _selectedMember = value;
+                OnPropertyChanged(nameof(SelectedMember));
+                //Validate();
+            } 
+        }
+
+        public Section SelectedSection
+        {
+            get { return _selectedSection; }
+            set
+            {
+                _selectedSection = value;
+                OnPropertyChanged(nameof(SelectedSection));
+                //Validate();
+            }
+        }
+
+        public MemberSection SelectedMemberSection 
+        {
+            get => _selectedMemberSection;
+            set
+            {
+                _selectedMemberSection = value;
+                OnPropertyChanged();
+                //Validate();
+            }
+        }
 
         public MainViewModel(IWindowController windowController) : base(windowController)
         {
             LoadCommands();
+            Validate();
         }
 
         private void LoadCommands()
@@ -39,18 +75,24 @@ namespace ClubAdministration.Wpf.ViewModels
             Member[] membs = await unitOfWork.MemberRepository.GetMembersCompletAsync();
             MemberSection[] membSects = await unitOfWork.MemberSectionRepository.GetMembSectCompletAsync();
 
-            _allSections = sects;
+            //_allSections = sects;
+            _allmembSect = membSects;
             Sections = new ObservableCollection<Section>(sects);
-            Members = new ObservableCollection<Member>(membs);
-            MemberSections = new ObservableCollection<MemberSection>(membSects);
+            //SelectedSection = _allSections.OrderByDescending(s => s.Name).FirstOrDefault();
+            SelectedSection = Sections.FirstOrDefault();
 
-            SelectedSection = _allSections.OrderByDescending(s => s.Name).FirstOrDefault();
-            var membersForSection = sects.Where(s => s.Id == SelectedSection.Id);
+            var membersForSection = membSects.Where(s => s.SectionId == SelectedSection.Id).ToList();
+            MemberSections = new ObservableCollection<MemberSection>(membersForSection);
+
+            Members = new ObservableCollection<Member>(membs);
         }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            throw new NotImplementedException();
+            if(Sections == null)
+            {
+                yield return new ValidationResult($"Datenbak ist fehlerhaft", new string[] { nameof(Sections) });
+            }
         }
 
         public static async Task<MainViewModel> CreateAsync(IWindowController windowController)
@@ -58,6 +100,28 @@ namespace ClubAdministration.Wpf.ViewModels
             var viewModel = new MainViewModel(windowController);
             await viewModel.LoadDataAsync();
             return viewModel;
+        }
+        // commands
+        public ICommand CmdEditMember
+        {
+            get
+            {
+                if (_cmdEditMember == null)
+                {
+                    _cmdEditMember = new RelayCommand(execute: _ => 
+                        {
+                            var window = new MembersViewModel(Controller, SelectedMember);
+                            window.Controller.ShowWindow(window, true);
+                        },
+                        canExecute: _ => SelectedSection != null);
+
+                }
+                return _cmdEditMember;
+            }
+            set
+            {
+                _cmdEditMember = value;
+            }
         }
     }
 }

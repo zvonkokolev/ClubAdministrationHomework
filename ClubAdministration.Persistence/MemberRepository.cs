@@ -18,7 +18,6 @@ namespace ClubAdministration.Persistence
         public Task<Member[]> GetMembersCompletAsync() => _dbContext.Members
             .Include(s => s.MemberSections)
             .OrderByDescending(s => s.LastName)
-            .ThenByDescending(s => s.FirstName)
             .ToArrayAsync()
             ;
 

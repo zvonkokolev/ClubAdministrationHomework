@@ -20,6 +20,8 @@ namespace ClubAdministration.Persistence
 
         public async Task<MemberSection[]> GetMembSectCompletAsync()
             => await _dbContext.MemberSections
-            .Include(m => m.Member).ToArrayAsync();
+            .Include(s => s.Section)
+            .Include(m => m.Member)
+            .ToArrayAsync();
     }
 }
