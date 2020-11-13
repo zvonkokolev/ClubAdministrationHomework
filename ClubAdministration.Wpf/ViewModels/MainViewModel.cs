@@ -1,4 +1,5 @@
 ﻿using ClubAdministration.Core.Contracts;
+using ClubAdministration.Core.DataTransferObjects;
 using ClubAdministration.Core.Entities;
 using ClubAdministration.Persistence;
 using ClubAdministration.Wpf.Common;
@@ -20,9 +21,11 @@ namespace ClubAdministration.Wpf.ViewModels
         private Section _selectedSection;
         private ICommand _cmdEditMember;
         private MemberSection _selectedMemberSection;
+        private MemberDto _selectedMemberDTO;
 
         public ObservableCollection<Section> Sections { get; set; }
         public ObservableCollection<Member> Members { get; set; }
+        public ObservableCollection<MemberDto> MembersDTO { get; private set; }
         public ObservableCollection<MemberSection> MemberSections { get; set; }
 
         public Member SelectedMember
@@ -32,10 +35,17 @@ namespace ClubAdministration.Wpf.ViewModels
             {
                 _selectedMember = value;
                 OnPropertyChanged(nameof(SelectedMember));
-                //Validate();
             } 
         }
-
+        public MemberDto SelectedMemberDTO 
+        {
+            get => _selectedMemberDTO;
+            set
+            {
+                _selectedMemberDTO = value;
+                OnPropertyChanged();
+            }
+        }
         public Section SelectedSection
         {
             get { return _selectedSection; }
@@ -43,8 +53,15 @@ namespace ClubAdministration.Wpf.ViewModels
             {
                 _selectedSection = value;
                 OnPropertyChanged(nameof(SelectedSection));
-                //Validate();
+                OnChangeSelectedSection_LoadNewMembersdata(_selectedSection.Id);
             }
+        }
+
+        private async void OnChangeSelectedSection_LoadNewMembersdata(int newSelectedSectionIndex)
+        {
+            using IUnitOfWork unitOfWork = new UnitOfWork();
+            var membsDTO = await unitOfWork.MemberSectionRepository.GetAllMembersDtoCompletBySelectedSectionIdAsync(newSelectedSectionIndex);
+            MembersDTO = new ObservableCollection<MemberDto>(membsDTO);
         }
 
         public MemberSection SelectedMemberSection 
@@ -54,7 +71,6 @@ namespace ClubAdministration.Wpf.ViewModels
             {
                 _selectedMemberSection = value;
                 OnPropertyChanged();
-                //Validate();
             }
         }
 
@@ -75,16 +91,17 @@ namespace ClubAdministration.Wpf.ViewModels
             Member[] membs = await unitOfWork.MemberRepository.GetMembersCompletAsync();
             MemberSection[] membSects = await unitOfWork.MemberSectionRepository.GetMembSectCompletAsync();
 
-            //_allSections = sects;
             _allmembSect = membSects;
+
             Sections = new ObservableCollection<Section>(sects);
-            //SelectedSection = _allSections.OrderByDescending(s => s.Name).FirstOrDefault();
             SelectedSection = Sections.FirstOrDefault();
 
             var membersForSection = membSects.Where(s => s.SectionId == SelectedSection.Id).ToList();
-            MemberSections = new ObservableCollection<MemberSection>(membersForSection);
+            var membsDTO = await unitOfWork.MemberSectionRepository.GetAllMembersDtoCompletBySelectedSectionIdAsync(SelectedSection.Id);
 
+            MemberSections = new ObservableCollection<MemberSection>(membersForSection);
             Members = new ObservableCollection<Member>(membs);
+            MembersDTO = new ObservableCollection<MemberDto>(membsDTO);
         }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

@@ -1,4 +1,5 @@
-﻿using ClubAdministration.Core.Entities;
+﻿using ClubAdministration.Core.DataTransferObjects;
+using ClubAdministration.Core.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,5 +9,7 @@ namespace ClubAdministration.Core.Contracts
     {
         Task AddRangeAsync(IEnumerable<MemberSection> memberSections);
         Task<MemberSection[]> GetMembSectCompletAsync();
+        Task<MemberDto[]> GetAllMembersDtoCompletAsync();
+        Task<MemberDto[]> GetAllMembersDtoCompletBySelectedSectionIdAsync(int id);
     }
 }

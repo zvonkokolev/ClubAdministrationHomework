@@ -8,7 +8,7 @@
         xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro" 
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance Type=viewModels:MainViewModel}"
-        Title="Club Administration" Height="450" Width="600">
+        Title="Club Administration" Height="450" Width="300">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -26,26 +26,18 @@
             <TextBlock Text="Section"></TextBlock>
             <ComboBox 
                   ItemsSource="{Binding Path=Sections}"
-                  SelectedItem="{Binding Path=SelectedSection, UpdateSourceTrigger=PropertyChanged}"
+                  SelectedItem="{Binding Path=SelectedSection}"
                   DisplayMemberPath="Name">
             </ComboBox>
         </StackPanel>
 
-        <DataGrid Grid.Row="1" Grid.ColumnSpan="3" ItemsSource="{Binding Path=Members}" SelectedItem="{Binding Path=SelectedMember}">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="{Binding Path=LastName}"
-                                    IsReadOnly="True"></DataGridTextColumn>
-                <DataGridTextColumn Header="{Binding Path=FirstName}"
-                                    IsReadOnly="True"></DataGridTextColumn>
-                <DataGridTextColumn Header="{Binding Path=Sections.Count}"
-                                    IsReadOnly="True"></DataGridTextColumn>
-            </DataGrid.Columns>
-
+        <DataGrid Grid.Row="1" Grid.ColumnSpan="3" ItemsSource="{Binding Path=MembersDTO}" SelectedItem="{Binding Path=SelectedMemberDTO}">
         </DataGrid>
+        
         <Button Grid.Row="2" 
                 Grid.Column="0" 
                 Grid.ColumnSpan="3" 
-                Content="{Binding Path=SelectedMember.FullName}"
+                Content="{Binding Path=SelectedMemberDTO.FullName}"
                 Command="{Binding Path=CmdEditMember}">
         </Button>
     </Grid>

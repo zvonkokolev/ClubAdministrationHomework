@@ -1,4 +1,5 @@
-﻿using ClubAdministration.Core.Entities;
+﻿using ClubAdministration.Core.DataTransferObjects;
+using ClubAdministration.Core.Entities;
 using System.Threading.Tasks;
 
 namespace ClubAdministration.Core.Contracts
@@ -7,5 +8,7 @@ namespace ClubAdministration.Core.Contracts
     {
         bool IstMitgliedVorhanden(string lastName, string firstName, int id);
         Task<Member[]> GetMembersCompletAsync();
+        Task<MemberDto[]> GetMembersDTOCompletAsync();
+        Task<MemberDto[]> GetMembersDTOCompletBySectionIdAsync(int id);
     }
 }
