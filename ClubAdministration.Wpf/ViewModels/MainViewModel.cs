@@ -21,12 +21,12 @@ namespace ClubAdministration.Wpf.ViewModels
         private Section _selectedSection;
         private ICommand _cmdEditMember;
         private MemberSection _selectedMemberSection;
-        private MemberDto _selectedMemberDTO;
+        //private MemberDto _selectedMemberDTO;
 
         public ObservableCollection<Section> Sections { get; set; }
         public ObservableCollection<Member> Members { get; set; }
-        public ObservableCollection<MemberDto> MembersDTO { get; private set; }
-        public ObservableCollection<MemberSection> MemberSections { get; set; }
+        //public ObservableCollection<MemberDto> MembersDTO { get; private set; }
+        public ObservableCollection<Member> MemberSections { get; set; }
 
         public Member SelectedMember
         {
@@ -35,17 +35,9 @@ namespace ClubAdministration.Wpf.ViewModels
             {
                 _selectedMember = value;
                 OnPropertyChanged(nameof(SelectedMember));
-            } 
-        }
-        public MemberDto SelectedMemberDTO 
-        {
-            get => _selectedMemberDTO;
-            set
-            {
-                _selectedMemberDTO = value;
-                OnPropertyChanged();
             }
         }
+
         public Section SelectedSection
         {
             get { return _selectedSection; }
@@ -53,24 +45,25 @@ namespace ClubAdministration.Wpf.ViewModels
             {
                 _selectedSection = value;
                 OnPropertyChanged(nameof(SelectedSection));
-                OnChangeSelectedSection_LoadNewMembersdata(_selectedSection.Id);
+                _ = OnChangeSelectedSection_LoadNewMembersdataAsync(SelectedSection.Id);
             }
         }
 
-        private async void OnChangeSelectedSection_LoadNewMembersdata(int newSelectedSectionIndex)
+        private async Task OnChangeSelectedSection_LoadNewMembersdataAsync(int newSelectedSectionIndex)
         {
             using IUnitOfWork unitOfWork = new UnitOfWork();
-            var membsDTO = await unitOfWork.MemberSectionRepository.GetAllMembersDtoCompletBySelectedSectionIdAsync(newSelectedSectionIndex);
-            MembersDTO = new ObservableCollection<MemberDto>(membsDTO);
+            Member[] membersForSection = await unitOfWork.MemberSectionRepository.GetAllMembersCompletBySelectedSectionIdAsync(newSelectedSectionIndex);
+            MemberSections = new ObservableCollection<Member>(membersForSection);
+            SelectedMember = membersForSection.FirstOrDefault();
         }
 
-        public MemberSection SelectedMemberSection 
+        public MemberSection SelectedMemberSection
         {
             get => _selectedMemberSection;
             set
             {
                 _selectedMemberSection = value;
-                OnPropertyChanged();
+                OnPropertyChanged(nameof(SelectedMember));
             }
         }
 
@@ -96,17 +89,14 @@ namespace ClubAdministration.Wpf.ViewModels
             Sections = new ObservableCollection<Section>(sects);
             SelectedSection = Sections.FirstOrDefault();
 
-            var membersForSection = membSects.Where(s => s.SectionId == SelectedSection.Id).ToList();
-            var membsDTO = await unitOfWork.MemberSectionRepository.GetAllMembersDtoCompletBySelectedSectionIdAsync(SelectedSection.Id);
+            Member[] membersForSection = await unitOfWork.MemberSectionRepository.GetAllMembersCompletBySelectedSectionIdAsync(SelectedSection.Id);
 
-            MemberSections = new ObservableCollection<MemberSection>(membersForSection);
-            Members = new ObservableCollection<Member>(membs);
-            MembersDTO = new ObservableCollection<MemberDto>(membsDTO);
+            MemberSections = new ObservableCollection<Member>(membersForSection);
         }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if(Sections == null)
+            if (Sections == null)
             {
                 yield return new ValidationResult($"Datenbak ist fehlerhaft", new string[] { nameof(Sections) });
             }
@@ -125,12 +115,12 @@ namespace ClubAdministration.Wpf.ViewModels
             {
                 if (_cmdEditMember == null)
                 {
-                    _cmdEditMember = new RelayCommand(execute: _ => 
+                    _cmdEditMember = new RelayCommand(execute: _ =>
                         {
                             var window = new MembersViewModel(Controller, SelectedMember);
                             window.Controller.ShowWindow(window, true);
                         },
-                        canExecute: _ => SelectedSection != null);
+                        canExecute: _ => SelectedMember != null);
 
                 }
                 return _cmdEditMember;

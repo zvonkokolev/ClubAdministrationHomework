@@ -11,5 +11,6 @@ namespace ClubAdministration.Core.Contracts
         Task<MemberSection[]> GetMembSectCompletAsync();
         Task<MemberDto[]> GetAllMembersDtoCompletAsync();
         Task<MemberDto[]> GetAllMembersDtoCompletBySelectedSectionIdAsync(int id);
+        Task<Member[]> GetAllMembersCompletBySelectedSectionIdAsync(int sectionId);
     }
 }

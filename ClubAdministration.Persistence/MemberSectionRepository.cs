@@ -20,6 +20,12 @@ namespace ClubAdministration.Persistence
     public async Task AddRangeAsync(IEnumerable<MemberSection> memberSections) 
       => await _dbContext.AddRangeAsync(memberSections);
 
+        public async Task<Member[]> GetAllMembersCompletBySelectedSectionIdAsync(int sectionId)
+            => await _dbContext.MemberSections
+            .Where(sec => sec.SectionId == sectionId)
+            .Select(m => m.Member)
+            .ToArrayAsync();
+
         public async Task<MemberDto[]> GetAllMembersDtoCompletAsync()
             => await _dbContext.MemberSections
             .Select(md => new MemberDto 
