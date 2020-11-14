@@ -21,11 +21,9 @@ namespace ClubAdministration.Wpf.ViewModels
         private Section _selectedSection;
         private ICommand _cmdEditMember;
         private MemberSection _selectedMemberSection;
-        //private MemberDto _selectedMemberDTO;
 
         public ObservableCollection<Section> Sections { get; set; }
         public ObservableCollection<Member> Members { get; set; }
-        //public ObservableCollection<MemberDto> MembersDTO { get; private set; }
         public ObservableCollection<Member> MemberSections { get; set; }
 
         public Member SelectedMember
@@ -35,6 +33,7 @@ namespace ClubAdministration.Wpf.ViewModels
             {
                 _selectedMember = value;
                 OnPropertyChanged(nameof(SelectedMember));
+                Validate();
             }
         }
 
@@ -46,6 +45,7 @@ namespace ClubAdministration.Wpf.ViewModels
                 _selectedSection = value;
                 OnPropertyChanged(nameof(SelectedSection));
                 _ = OnChangeSelectedSection_LoadNewMembersdataAsync(SelectedSection.Id);
+                Validate();
             }
         }
 
@@ -64,6 +64,7 @@ namespace ClubAdministration.Wpf.ViewModels
             {
                 _selectedMemberSection = value;
                 OnPropertyChanged(nameof(SelectedMember));
+                Validate();
             }
         }
 
@@ -121,7 +122,6 @@ namespace ClubAdministration.Wpf.ViewModels
                             window.Controller.ShowWindow(window, true);
                         },
                         canExecute: _ => SelectedMember != null);
-
                 }
                 return _cmdEditMember;
             }

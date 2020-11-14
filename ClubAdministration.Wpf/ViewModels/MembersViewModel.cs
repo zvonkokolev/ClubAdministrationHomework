@@ -33,7 +33,14 @@ namespace ClubAdministration.Wpf.ViewModels
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            throw new NotImplementedException();
+            if(LastName.Length < 2)
+            {
+                yield return new ValidationResult("Lastname must be at least 2 character long", new string[] { nameof(LastName)});
+            }
+            if (FirstName.Length < 2)
+            {
+                yield return new ValidationResult("Firstname must be at least 2 character long", new string[] { nameof(FirstName) });
+            }
         }
 
         // commands
@@ -41,19 +48,33 @@ namespace ClubAdministration.Wpf.ViewModels
         {
             get
             {
-                if(_cmdSaveMember == null)
+                if (_cmdSaveMember == null)
                 {
                     _cmdSaveMember = new RelayCommand(
-                        execute: _ =>
+                        execute: async _ =>
                         {
-                            IUnitOfWork uow = new UnitOfWork();
+                            using IUnitOfWork uow = new UnitOfWork();
+                            Member memberFromDB = await uow.MemberRepository.GetMemberByIdAsync(_member.Id);
+                            memberFromDB.LastName = LastName;
+                            memberFromDB.FirstName = FirstName;
                             try
                             {
-                                uow.SaveChangesAsync();
+                                await uow.SaveChangesAsync();
+                                Controller.CloseWindow(this);
                             }
-                            catch (Exception)
+                            catch (ValidationException e)
                             {
-                                throw;
+                                if(e.Value is IEnumerable<string> prop)
+                                {
+                                    foreach (var item in prop)
+                                    {
+                                        AddErrorsToProperty(item, new List<string> { e.ValidationResult.ErrorMessage });
+                                    }
+                                }
+                                else
+                                {
+                                    DbError = e.ValidationResult.ErrorMessage;
+                                }
                             }
                         }
                     , canExecute: _ => Member != null
@@ -86,7 +107,7 @@ namespace ClubAdministration.Wpf.ViewModels
             {
                 _lastName = value;
                 OnPropertyChanged(nameof(LastName));
-                //Validate();
+                Validate();
             } 
         }
         [Required]
@@ -98,7 +119,7 @@ namespace ClubAdministration.Wpf.ViewModels
             {
                 _firstName = value;
                 OnPropertyChanged(nameof(FirstName));
-                //Validate();
+                Validate();
             } 
         }
     }

@@ -17,6 +17,9 @@ namespace ClubAdministration.Persistence
             _dbContext = dbContext;
         }
 
+        public async Task<Member> GetMemberByIdAsync(int id) =>
+            await _dbContext.Members.SingleAsync(m => m.Id == id);
+
         public Task<Member[]> GetMembersCompletAsync() => _dbContext.Members
             .Include(s => s.MemberSections)
             .OrderByDescending(s => s.LastName)

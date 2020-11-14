@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClubAdministration.Wpf.Views"
         mc:Ignorable="d"
-        Title="MembersWindow" Height="120" Width="250">
+        Title="MembersWindow" Height="320" Width="650">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -17,14 +18,20 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        
-        <TextBlock Text="Lastname" Grid.Row="0" Grid.Column="0"></TextBlock>
-        <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding Path=LastName, UpdateSourceTrigger=PropertyChanged}"></TextBox>
-        
-        <TextBlock Text="Firstname" Grid.Row="1" Grid.Column="0"></TextBlock>
-        <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding Path=FirstName, UpdateSourceTrigger=PropertyChanged}"></TextBox>
 
-        <Button Content="Save Member" Command="{Binding Path=CmdSaveMember}" Grid.Column="2" Grid.Row="2"></Button> 
+        <TextBlock Text="Lastname" Grid.Row="0" Grid.Column="0" Margin="20,0,20,0"></TextBlock>
+        <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" 
+                 Text="{Binding Path=LastName, UpdateSourceTrigger=PropertyChanged}"
+                 Margin="20,0,20,0"></TextBox>
+
+        <TextBlock Text="Firstname" Grid.Row="1" Grid.Column="0" Margin="20,0,20,0"></TextBlock>
+        <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" 
+                 Text="{Binding Path=FirstName, UpdateSourceTrigger=PropertyChanged}"
+                 Margin="20,0,20,0"></TextBox>
+
+        <Label Grid.Row="2" Content="{Binding DBError, UpdateSourceTrigger=PropertyChanged}"></Label>
+        
+        <Button Content="Save Member" Command="{Binding Path=CmdSaveMember}" Grid.Column="2" Grid.Row="3"></Button> 
 
     </Grid>
 </Window>
