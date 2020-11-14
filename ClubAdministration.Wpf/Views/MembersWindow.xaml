@@ -5,24 +5,26 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClubAdministration.Wpf.Views"
         mc:Ignorable="d"
-        Title="MembersWindow" Height="450" Width="800">
+        Title="MembersWindow" Height="120" Width="250">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
-
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="Auto"></ColumnDefinition>
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Row="0" Grid.Column="0">
-            <TextBlock Text="Lastname"></TextBlock>
-            <TextBlock Text="Firstname"></TextBlock>
-        </StackPanel>
-        <StackPanel Grid.Row="0" Grid.Column="1">
-            <TextBox></TextBox>
-            <TextBox></TextBox>
-        </StackPanel>
+        
+        <TextBlock Text="Lastname" Grid.Row="0" Grid.Column="0"></TextBlock>
+        <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding Path=LastName, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+        
+        <TextBlock Text="Firstname" Grid.Row="1" Grid.Column="0"></TextBlock>
+        <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Text="{Binding Path=FirstName, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+
+        <Button Content="Save Member" Command="{Binding Path=CmdSaveMember}" Grid.Column="2" Grid.Row="2"></Button> 
 
     </Grid>
 </Window>
