@@ -51,10 +51,17 @@ namespace ClubAdministration.Wpf.ViewModels
 
         private async Task OnChangeSelectedSection_LoadNewMembersdataAsync(int newSelectedSectionIndex)
         {
+            Controller.CloseWindow(this);
+
             using IUnitOfWork unitOfWork = new UnitOfWork();
-            Member[] membersForSection = await unitOfWork.MemberSectionRepository.GetAllMembersCompletBySelectedSectionIdAsync(newSelectedSectionIndex);
+            SelectedSection.Id = newSelectedSectionIndex;
+            Member[] membersForSection = await unitOfWork
+                .MemberSectionRepository
+                .GetAllMembersCompletBySelectedSectionIdAsync(SelectedSection.Id);
             MemberSections = new ObservableCollection<Member>(membersForSection);
             SelectedMember = membersForSection.FirstOrDefault();
+
+            Controller.ShowWindow(this, false);
         }
 
         public MemberSection SelectedMemberSection
@@ -89,10 +96,9 @@ namespace ClubAdministration.Wpf.ViewModels
 
             Sections = new ObservableCollection<Section>(sects);
             SelectedSection = Sections.FirstOrDefault();
-
             Member[] membersForSection = await unitOfWork.MemberSectionRepository.GetAllMembersCompletBySelectedSectionIdAsync(SelectedSection.Id);
-
             MemberSections = new ObservableCollection<Member>(membersForSection);
+            SelectedMember = membersForSection.FirstOrDefault();
         }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
